@@ -14,16 +14,23 @@ public interface MedicoRepository extends JpaRepository<Medico,Long>
     //Primer cambio en intellij
 
 
-    @Query("""
-            select m from Medico m
-            where m.activo=1 and
-            m.especialidad =:especialidad and
-            m.id not in(
-            select c.medico.id from Consulta c
-            c.data=:fecha
+    @Query( """
+            SELECT m FROM Medico m
+            WHERE m.activo = true
+            AND m.especialidad = :especialidad
+            AND m.id NOT IN (
+            SELECT c.medico.id FROM Consulta c
+            WHERE c.data = :fecha
             )
-            order by rand()
-            limit 1
+            ORDER BY RAND()
+            LIMIT 1
             """)
-    Medico seleccionarMedicoConEspecialidadEnFecha(Especialidad especialidad, LocalDateTime fecha);
+   Medico seleccionarMedicoConEspecialidadEnFecha(Especialidad especialidad, LocalDateTime fecha);
+
+    @Query("""
+            Select m.activo
+            from Medico m
+            where m.id=:idMedico
+            """)
+    Boolean findActivoById(Long idMedico);
 }
